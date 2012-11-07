@@ -10,7 +10,7 @@ namespace Contao;
  * @author     Helmut Schottmüller <contao@aurealis.de>
  * @package    Controller
  */
-class TagListContentElements extends \TagList
+class TagListContentElements extends TagList
 {
 	protected $arrContentElements = array();
 	protected $arrPages = array();
