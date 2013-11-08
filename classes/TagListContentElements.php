@@ -6,8 +6,8 @@ namespace Contao;
  * Class TagListContentElements
  *
  * Provide methods to handle tag input fields.
- * @copyright  Helmut Schottmüller 2010
- * @author     Helmut Schottmüller <contao@aurealis.de>
+ * @copyright  Helmut Schottmüller 2010-2013
+ * @author     Helmut Schottmüller <https://github.com/hschottm>
  * @package    Controller
  */
 class TagListContentElements extends TagList
@@ -24,9 +24,9 @@ class TagListContentElements extends TagList
 		$ids = array();
 		for ($i = 0; $i < count($for_tags); $i++)
 		{
-			$arr = $this->Database->prepare("SELECT DISTINCT tl_tag.id FROM tl_tag, tl_content WHERE tl_tag.id = tl_content.id AND from_table = ?  AND tl_tag.id IN (" . join($this->arrContentElements, ',') . ") AND tag = ? ORDER BY tl_tag.id ASC")
+			$arr = $this->Database->prepare("SELECT DISTINCT tl_tag.tid FROM tl_tag, tl_content WHERE tl_tag.tid = tl_content.id AND from_table = ?  AND tl_tag.tid IN (" . join($this->arrContentElements, ',') . ") AND tag = ? ORDER BY tl_tag.tid ASC")
 				->execute(array('tl_content', $for_tags[$i]))
-				->fetchEach('id');
+				->fetchEach('tid');
 			if ($i == 0)
 			{
 				$ids = $arr;
@@ -40,7 +40,7 @@ class TagListContentElements extends TagList
 		$arrCloudTags = array();
 		if (count($ids))
 		{
-			$objTags = $this->Database->prepare("SELECT tag, COUNT(tag) as count FROM tl_tag, tl_content WHERE tl_tag.id = tl_content.id AND from_table = ?  AND tl_tag.id IN (" . join($ids, ",") . ") GROUP BY tag ORDER BY tag ASC")
+			$objTags = $this->Database->prepare("SELECT tag, COUNT(tag) as count FROM tl_tag, tl_content WHERE tl_tag.tid = tl_content.id AND from_table = ?  AND tl_tag.tid IN (" . join($ids, ",") . ") GROUP BY tag ORDER BY tag ASC")
 				->execute('tl_content');
 			$list = "";
 			$tags = array();
@@ -50,7 +50,7 @@ class TagListContentElements extends TagList
 				{
 					if (!in_array($objTags->tag, $for_tags))
 					{
-						$count = count($this->Database->prepare("SELECT tl_tag.id FROM tl_tag, tl_content WHERE tl_tag.id = tl_content.id AND tag = ? AND from_table = ? AND tl_tag.id IN (" . join($ids, ",") . ")")
+						$count = count($this->Database->prepare("SELECT tl_tag.tid FROM tl_tag, tl_content WHERE tl_tag.tid = tl_content.id AND tag = ? AND from_table = ? AND tl_tag.tid IN (" . join($ids, ",") . ")")
 							->execute($objTags->tag, 'tl_content')
 							->fetchAllAssoc());
 						array_push($tags, array('tag_name' => $objTags->tag, 'tag_count' => $count));
@@ -71,7 +71,7 @@ class TagListContentElements extends TagList
 		{
 			if (count($this->arrContentElements))
 			{
-				$objTags = $this->Database->prepare("SELECT tag, COUNT(tag) as count FROM tl_tag, tl_content WHERE tl_tag.id = tl_content.id AND from_table = ? AND tl_tag.id IN (" . join($this->arrContentElements, ',') . ") GROUP BY tag ORDER BY tag ASC")
+				$objTags = $this->Database->prepare("SELECT tag, COUNT(tag) as count FROM tl_tag, tl_content WHERE tl_tag.tid = tl_content.id AND from_table = ? AND tl_tag.tid IN (" . join($this->arrContentElements, ',') . ") GROUP BY tag ORDER BY tag ASC")
 					->execute('tl_content');
 				$list = "";
 				$tags = array();
